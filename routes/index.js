@@ -1,17 +1,35 @@
-#!/usr/bin/node
+import {
+  Router,
+} from 'express';
+import AppController from '../controllers/AppController';
+import UsersController from '../controllers/UsersController';
+import AuthController from '../controllers/AuthController';
+import FilesController from '../controllers/FilesController';
 
-const express = require('express');
-const AppController = require('../controllers/AppController');
-const UsersController = require('../controllers/UsersController');
-const AuthController = require('../controllers/AuthController');
+const router = Router();
 
-const router = express.Router();
-
+// check status and stats of db
 router.get('/status', AppController.getStatus);
 router.get('/stats', AppController.getStats);
-router.post('/users', UsersController.postNew);
+
+// connect and disconnect user
 router.get('/connect', AuthController.getConnect);
 router.get('/disconnect', AuthController.getDisconnect);
-router.get('/users/me', AuthController.getMe);
 
-module.exports = router;
+// upload files
+router.post('/files', FilesController.postUpload);
+router.get('/files/:id', FilesController.getShow);
+router.get('/files', FilesController.getIndex);
+
+// publish and unpublish
+router.put('/files/:id/publish', FilesController.putPublish);
+router.put('/files/:id/unpublish', FilesController.putUnpublish);
+
+// user
+router.post('/users', UsersController.postNew);
+router.get('/users/me', UsersController.getMe);
+
+// file content
+router.get('/files/:id/data', FilesController.getFile);
+
+export default router;
